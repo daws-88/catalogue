@@ -11,7 +11,31 @@ Example: Repeating the same block of code in multiple places.
 ### Maintainability Rating
 Indicates how maintainable the code is, based on technical debt ratio.
 
-### Security Rating
-Indicates the security level of the code based on detected vulnerabilities.
 ### Code Coverage
 The percentage of executable code covered by automated tests.
+
+### unit test
+* Unit testing will give us a JSON report
+* Total test cases executed
+* How many passed, How many failed
+* This report should be uploaded to SonarQube server through agent.
+
+### Security Rating
+* Measures the severity of detected vulnerabilities. In the traditional rating system, A means no vulnerabilities; B–E correspond to increasingly severe vulnerabilities.
+
+### Maintainability
+* Maintainability means how easy or difficult it is to modify and maintain your code.
+* SonarQube uses the Technical Debt Ratio to determine the traditional Maintainability Rating.
+
+### Remediation Cost
+Remediation cost means the estimated time and effort needed to fix a problem in your code.
+
+### Reliability Rating
+Reliability Rating tells you how serious the bugs detected in your code are.
+
+### Rating grades
+🟢 A	Excellent
+🟢 B	Good
+🟡 C	Needs improvement
+🟠 D	Poor
+🔴 E	Worst

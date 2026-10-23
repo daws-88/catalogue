@@ -42,7 +42,7 @@ pipeline {
         }
          stage('sonar scan') {
             environment {
-                 def scannerHome = tool 'Sonar-8.0'
+                 def scannerHome = tool 'sonar-8.0'
             }
             steps {
                 withSonarQubeEnv('sonar-scanner') {                   
@@ -50,6 +50,13 @@ pipeline {
             }
          }
        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Build Image') {
             steps {
                 script {
