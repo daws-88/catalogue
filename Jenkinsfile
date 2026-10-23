@@ -42,7 +42,7 @@ pipeline {
         }
          stage('sonar scan') {
             environment {
-                 def scannerHome = tool 'Sonar-8.0'
+                 def scannerHome = tool 'sonar-8.0'
             }
             steps {
                 withSonarQubeEnv('SonarQube-Server') {                   
