@@ -7,7 +7,7 @@ pipeline {
     environment {
         COURSE = "jenkins"
         appVersion = ""
-        ACC_ID = "183992491863"
+        ACC_ID = "843976228791"
         PROJECT = "roboshop"
         COMPONENT = "catalogue"
     }
@@ -28,9 +28,28 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh """
+                    npm install
+                   """
             }
         }
+        stage('unit test') {
+            steps {
+                sh """
+                    npm test
+                   """
+            }
+        }
+         stage('sonar scan') {
+            environment {
+                 def scannerHome = tool 'Sonar-8.0'
+            }
+            steps {
+                withSonarQubeEnv('SonarQube-Server') {                   
+                    sh "${scannerHome}/bin/sonar-scanner"
+            }
+         }
+       }
         stage('Build Image') {
             steps {
                 script {
