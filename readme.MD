@@ -33,6 +33,17 @@ Remediation cost means the estimated time and effort needed to fix a problem in 
 ### Reliability Rating
 Reliability Rating tells you how serious the bugs detected in your code are.
 
+### Technical debt ratio:
+is a metric measures cost of fixing technical debt to total cost of building software or application
+cost of fixing technical debt = 200
+total cost = 10000
+      TDR = (200/10000)*100
+        = 20 %
+
+## CVSS(Common vulnerabilitiy scoring system):
+is a standard measure severity of security vulnerabilities.
+
+
 ### Rating grades
 🟢 A	Excellent
 🟢 B	Good
