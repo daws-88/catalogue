@@ -9,7 +9,7 @@ pipeline {
         appVersion = ""
         ACC_ID = "843976228791"
         PROJECT = "roboshop"
-        COMPONENT = "catalogue1"
+        COMPONENT = "catalogue"
     }
     options {
         timeout(time: 10, unit: 'MINUTES')
