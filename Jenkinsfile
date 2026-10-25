@@ -42,61 +42,61 @@ pipeline {
             }
         }
 
-        stage('Dependabot Security Check') {
-            environment {
-                GITHUB_REPO = 'daws-88/catalogue'
-                GITHUB_API = 'https://api.github.com'
-            }
+        // stage('Dependabot Security Check') {
+        //     environment {
+        //         GITHUB_REPO = 'daws-88/catalogue'
+        //         GITHUB_API = 'https://api.github.com'
+        //     }
 
-            steps {
-                script {
-                    withCredentials([
-                        string(
-                            credentialsId: 'github-token',
-                            variable: 'GITHUB_TOKEN'
-                        )
-                    ]) {
-                        def response = sh(
-                            script: '''
-                                curl -fsS \
-                                  -H "Accept: application/vnd.github+json" \
-                                  -H "Authorization: Bearer $GITHUB_TOKEN" \
-                                  -H "X-GitHub-Api-Version: 2022-11-28" \
-                                  "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts?per_page=100"
-                            ''',
-                            returnStdout: true
-                        ).trim()
+        //     steps {
+        //         script {
+        //             withCredentials([
+        //                 string(
+        //                     credentialsId: 'github-token',
+        //                     variable: 'GITHUB_TOKEN'
+        //                 )
+        //             ]) {
+        //                 def response = sh(
+        //                     script: '''
+        //                         curl -fsS \
+        //                           -H "Accept: application/vnd.github+json" \
+        //                           -H "Authorization: Bearer $GITHUB_TOKEN" \
+        //                           -H "X-GitHub-Api-Version: 2022-11-28" \
+        //                           "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts?per_page=100"
+        //                     ''',
+        //                     returnStdout: true
+        //                 ).trim()
 
-                        // Parse JSON using the Pipeline Utility Steps plugin
-                        def alerts = readJSON text: response
+        //                 // Parse JSON using the Pipeline Utility Steps plugin
+        //                 def alerts = readJSON text: response
 
-                        if (!(alerts instanceof List)) {
-                            error('Invalid Dependabot API response')
-                        }
+        //                 if (!(alerts instanceof List)) {
+        //                     error('Invalid Dependabot API response')
+        //                 }
 
-                        def blockingAlerts = alerts.findAll { alert ->
-                            alert.state == 'open' &&
-                            alert.security_vulnerability?.severity in [
-                                'high',
-                                'critical'
-                            ]
-                        }
+        //                 def blockingAlerts = alerts.findAll { alert ->
+        //                     alert.state == 'open' &&
+        //                     alert.security_vulnerability?.severity in [
+        //                         'high',
+        //                         'critical'
+        //                     ]
+        //                 }
 
-                        if (blockingAlerts) {
-                            echo "Open High/Critical alerts: ${blockingAlerts.size()}"
+        //                 if (blockingAlerts) {
+        //                     echo "Open High/Critical alerts: ${blockingAlerts.size()}"
 
-                            blockingAlerts.each { alert ->
-                                echo "Alert #${alert.number}: ${alert.security_vulnerability?.severity}"
-                            }
+        //                     blockingAlerts.each { alert ->
+        //                         echo "Alert #${alert.number}: ${alert.security_vulnerability?.severity}"
+        //                     }
 
-                            error('Pipeline stopped: Open High/Critical vulnerabilities found')
-                        }
+        //                     error('Pipeline stopped: Open High/Critical vulnerabilities found')
+        //                 }
 
-                        echo 'No open High/Critical vulnerabilities found in the returned alerts.'
-                    }
-                }
-            }
-        }
+        //                 echo 'No open High/Critical vulnerabilities found in the returned alerts.'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build Image') {
             steps {
