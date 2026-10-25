@@ -1,11 +1,9 @@
-
 pipeline {
     agent {
         node {
             label 'AGENT-1'
         }
     }
-
     environment {
         COURSE = 'jenkins'
         APP_VERSION = ''
@@ -13,12 +11,10 @@ pipeline {
         PROJECT = 'roboshop'
         COMPONENT = 'catalogue'
     }
-
     options {
         timeout(time: 10, unit: 'MINUTES')
         disableConcurrentBuilds()
     }
-
     stages {
         stage('Read Version') {
             steps {
@@ -29,19 +25,33 @@ pipeline {
                 }
             }
         }
-
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
-
         stage('Unit Test') {
             steps {
                 sh 'npm test'
             }
         }
-
+        stage('sonar scan') {
+            environment {
+                 def scannerHome = tool 'sonar-8.0'
+            }
+            steps {
+                withSonarQubeEnv('sonar-scanner') {                   
+                    sh "${scannerHome}/bin/sonar-scanner"
+            }
+         }
+       }
+       stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         // stage('Dependabot Security Check') {
         //     environment {
         //         GITHUB_REPO = 'daws-88/catalogue'
@@ -97,7 +107,6 @@ pipeline {
         //         }
         //     }
         // }
-
         stage('Build Image') {
             steps {
                 script {
@@ -110,14 +119,12 @@ pipeline {
                               docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
 
                             docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${env.APP_VERSION} .
-
                             docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${env.APP_VERSION}
                         """
                     }
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 echo 'Hello Deploying'
@@ -130,15 +137,12 @@ pipeline {
             echo 'I will always say Hello'
             cleanWs()
         }
-
-        success {
+       success {
             echo 'Run if pipeline success'
         }
-
         failure {
             echo 'Run if pipeline failure'
         }
-
         aborted {
             echo 'Pipeline is aborted'
         }
