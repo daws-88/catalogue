@@ -43,10 +43,27 @@ total cost = 10000
 ### CVSS(Common vulnerabilitiy scoring system):
 is a standard measure severity of security vulnerabilities.
 
-
 ### Rating grades
 🟢 A	Excellent
 🟢 B	Good
 🟡 C	Needs improvement
 🟠 D	Poor
 🔴 E	Worst
+
+### install trivy
+* create trivy repo
+    ```
+    sudo tee /etc/yum.repos.d/trivy.repo <<'EOF'
+    [trivy]
+    name=Trivy repository
+    baseurl=https://aquasecurity.github.io/trivy-repo/rpm/releases/$basearch/
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key
+    EOF
+    ```
+* Update packages
+    ``` sudo dnf makecache ```
+
+* Install Trivy
+``` sudo dnf install trivy -y ```

@@ -40,20 +40,60 @@ pipeline {
                    """
             }
         }
-         stage('sonar scan') {
+    //      stage('sonar scan') {
+    //         environment {
+    //              def scannerHome = tool 'sonar-8.0'
+    //         }
+    //         steps {
+    //             withSonarQubeEnv('sonar-scanner') {                   
+    //                 sh "${scannerHome}/bin/sonar-scanner"
+    //         }
+    //      }
+    //    }
+        // stage('Quality Gate') {
+        //     steps {
+        //         timeout(time: 1, unit: 'HOURS') {
+        //             waitForQualityGate abortPipeline: true
+        //         }
+        //     }
+        // }
+        stage('Dependabot Security Check') {
             environment {
-                 def scannerHome = tool 'sonar-8.0'
+                GITHUB_REPO = 'daws-88/catalogue'
+                GITHUB_API = 'https://api.github.com/repos/daws-88/catalogue/dependabot/alerts'
             }
             steps {
-                withSonarQubeEnv('sonar-scanner') {                   
-                    sh "${scannerHome}/bin/sonar-scanner"
-            }
-         }
-       }
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
+                script {
+                    withCredentials([
+                        string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
+                    ]) {
+                        def response = sh(
+                            script: '''
+                                curl -s \
+                                -H "Accept: application/vnd.github+json" \
+                                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                                "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts?per_page=100"
+                            ''',
+                            returnStdout: true
+                        ).trim()
+                        def alerts = new groovy.json.JsonSlurperClassic()
+                            .parseText(response)
+                        if (!(alerts instanceof List)) {
+                            error('Invalid Dependabot API response')
+                        }
+                        def blockingAlerts = alerts.findAll { alert ->
+                            alert.state == 'open' &&
+                            alert.security_vulnerability?.severity in ['high', 'critical']
+                        }
+                        if (blockingAlerts) {
+                            echo "Open High/Critical alerts: ${blockingAlerts.size()}"
+                            blockingAlerts.each { alert ->
+                                echo "Alert #${alert.number}: ${alert.security_vulnerability?.severity}"
+                            }
+                            error('Pipeline stopped: Open High/Critical vulnerabilities found')
+                        }
+                        echo 'No open High/Critical vulnerabilities found. Proceeding.'
+                    }
                 }
             }
         }
