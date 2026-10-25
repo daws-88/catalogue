@@ -121,7 +121,7 @@ pipeline {
     post {
         always {
             echo 'I will always say Hello'
-            cleanWs()
+            cleanWs() // clean workspace
         }
         success {
             echo 'Run if pipeline success'

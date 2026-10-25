@@ -62,10 +62,10 @@ is a standard measure severity of security vulnerabilities.
     gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key
     EOF
     ```
-2. Update packages
+2. Update packages 
 
      ``` sudo dnf makecache ```
 
-3.  Install Trivy
+3.  Install Trivy and check version
 
     ``` sudo dnf install trivy -y ```
