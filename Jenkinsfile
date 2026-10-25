@@ -72,7 +72,7 @@ pipeline {
                                 curl -s \
                                 -H "Accept: application/vnd.github+json" \
                                 -H "Authorization: Bearer $GITHUB_TOKEN" \
-                                "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts?per_page=100"
+                                "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts
                             ''',
                             returnStdout: true
                         ).trim()

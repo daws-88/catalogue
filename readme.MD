@@ -51,7 +51,7 @@ is a standard measure severity of security vulnerabilities.
 🔴 E	Worst
 
 ### install trivy
-* create trivy repo
+1. create trivy repo
     ```
     sudo tee /etc/yum.repos.d/trivy.repo <<'EOF'
     [trivy]
@@ -62,8 +62,10 @@ is a standard measure severity of security vulnerabilities.
     gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key
     EOF
     ```
-* Update packages
-    ``` sudo dnf makecache ```
+2. Update packages
 
-* Install Trivy
-``` sudo dnf install trivy -y ```
+     ``` sudo dnf makecache ```
+
+3.  Install Trivy
+
+    ``` sudo dnf install trivy -y ```
