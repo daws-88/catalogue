@@ -105,8 +105,7 @@ pipeline {
             steps {
                 script {
                     withAWS(
-                        credentials: 'aws-creds',
-                        region: 'us-east-1'
+                        credentials: 'aws-creds', region: 'us-east-1'
                     ) {
                         sh """
                             aws ecr get-login-password --region us-east-1 |
