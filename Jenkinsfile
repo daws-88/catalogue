@@ -130,7 +130,7 @@ pipeline {
                     --exit-code 1 \
                     --no-progress \
                     --format table \
-                    ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:1.1.0
+                    ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:1.0.0
                     """
                 }
             }
