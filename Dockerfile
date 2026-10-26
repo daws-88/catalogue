@@ -1,4 +1,4 @@
-FROM node:20.19.5-alpine AS build
+FROM node:20.19.5-alpine3.22 AS build
 WORKDIR /opt/server
 COPY package.json .
 COPY *.js .
@@ -6,9 +6,9 @@ COPY *.js .
 RUN npm install
 
 
-FROM node:20.19.5-alpine 
-RUN apt-get update && \
-    apk add --no-cache curl
+FROM node:20.19.5-alpine3.22 
+RUN apk update && \
+    apk upgrade --no-cache
 WORKDIR /opt/server
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop &&  \
     chown -R roboshop:roboshop /opt/server
