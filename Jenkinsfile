@@ -7,7 +7,7 @@ pipeline {
     environment {
         COURSE = 'jenkins'
         APP_VERSION = ''
-        ACC_ID = '843976228791'
+        ACC_ID = '183992491863'
         PROJECT = 'roboshop'
         COMPONENT = 'catalogue'
     }
@@ -29,84 +29,78 @@ pipeline {
             steps {
                 sh 'npm install'
             }
-        }
+         }
         stage('Unit Test') {
             steps {
                 sh 'npm test'
             }
         }
-        stage('sonar scan') {
-            environment {
-                 def scannerHome = tool 'sonar-8.0'
-            }
-            steps {
-                withSonarQubeEnv('sonar-scanner') {                   
-                    sh "${scannerHome}/bin/sonar-scanner"
-            }
-         }
-       }
-       stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-        // stage('Dependabot Security Check') {
-        //     environment {
-        //         GITHUB_REPO = 'daws-88/catalogue'
-        //         GITHUB_API = 'https://api.github.com'
-        //     }
+    //     stage('sonar scan') {
+    //         environment {
+    //              def scannerHome = tool 'sonar-8.0'
+    //         }
+    //         steps {
+    //             withSonarQubeEnv('sonar-scanner') {                   
+    //                 sh "${scannerHome}/bin/sonar-scanner"
+    //         }
+    //      }
+    //    }
+    //    stage('Quality Gate') {
+    //         steps {
+    //             timeout(time: 1, unit: 'HOURS') {
+    //                 waitForQualityGate abortPipeline: true
+    //             }
+    //         }
+    //     }
+    //     stage('Dependabot Security Check') {
+    //         environment {
+    //             GITHUB_REPO = 'daws-88/catalogue'
+    //             GITHUB_API = 'https://api.github.com'
+    //         }
+    //         steps {
+    //             script {
+    //                 withCredentials([
+    //                     string(
+    //                         credentialsId: 'github-token',
+    //                         variable: 'GITHUB_TOKEN'
+    //                     )
+    //                 ]) {
+    //                     def response = sh(
+    //                         script: '''
+    //                             curl -fsS \
+    //                               -H "Accept: application/vnd.github+json" \
+    //                               -H "Authorization: Bearer $GITHUB_TOKEN" \
+    //                               -H "X-GitHub-Api-Version: 2022-11-28" \
+    //                               "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts?per_page=100"
+    //                         ''',
+    //                         returnStdout: true
+    //                     ).trim()
 
-        //     steps {
-        //         script {
-        //             withCredentials([
-        //                 string(
-        //                     credentialsId: 'github-token',
-        //                     variable: 'GITHUB_TOKEN'
-        //                 )
-        //             ]) {
-        //                 def response = sh(
-        //                     script: '''
-        //                         curl -fsS \
-        //                           -H "Accept: application/vnd.github+json" \
-        //                           -H "Authorization: Bearer $GITHUB_TOKEN" \
-        //                           -H "X-GitHub-Api-Version: 2022-11-28" \
-        //                           "$GITHUB_API/repos/$GITHUB_REPO/dependabot/alerts?per_page=100"
-        //                     ''',
-        //                     returnStdout: true
-        //                 ).trim()
+    //                     // Parse JSON using the Pipeline Utility Steps plugin
+    //                     def alerts = readJSON text: response
+    //                     if (!(alerts instanceof List)) {
+    //                         error('Invalid Dependabot API response')
+    //                     }
+    //                     def blockingAlerts = alerts.findAll { alert ->
+    //                         alert.state == 'open' &&
+    //                         alert.security_vulnerability?.severity in [
+    //                             'high',
+    //                             'critical'
+    //                         ]
+    //                     }
+    //                     if (blockingAlerts) {
+    //                         echo "Open High/Critical alerts: ${blockingAlerts.size()}"
+    //                         blockingAlerts.each { alert ->
+    //                             echo "Alert #${alert.number}: ${alert.security_vulnerability?.severity}"
+    //                         }
 
-        //                 // Parse JSON using the Pipeline Utility Steps plugin
-        //                 def alerts = readJSON text: response
-
-        //                 if (!(alerts instanceof List)) {
-        //                     error('Invalid Dependabot API response')
-        //                 }
-
-        //                 def blockingAlerts = alerts.findAll { alert ->
-        //                     alert.state == 'open' &&
-        //                     alert.security_vulnerability?.severity in [
-        //                         'high',
-        //                         'critical'
-        //                     ]
-        //                 }
-
-        //                 if (blockingAlerts) {
-        //                     echo "Open High/Critical alerts: ${blockingAlerts.size()}"
-
-        //                     blockingAlerts.each { alert ->
-        //                         echo "Alert #${alert.number}: ${alert.security_vulnerability?.severity}"
-        //                     }
-
-        //                     error('Pipeline stopped: Open High/Critical vulnerabilities found')
-        //                 }
-
-        //                 echo 'No open High/Critical vulnerabilities found in the returned alerts.'
-        //             }
-        //         }
-        //     }
-        // }
+    //                         error('Pipeline stopped: Open High/Critical vulnerabilities found')
+    //                     }
+    //                     echo 'No open High/Critical vulnerabilities found in the returned alerts.'
+    //                 }
+    //             }
+    //         }
+    //     }
         stage('Build Image') {
             steps {
                 script {
@@ -124,6 +118,22 @@ pipeline {
                     }
                 }
             }
+        // }
+        // stage('trivy scan') {
+        //     steps {
+        //         script {
+        //             sh """                                          
+        //             trivy image \
+        //             --scanners vuln \
+        //             --severity HIGH,CRITICAL,MEDIUM \
+        //             --pkg-types os \
+        //             --exit-code 1 \
+        //             --no-progress \
+        //             --format table \
+        //             ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:1.1.0
+        //             """
+        //         }
+        //     }
         }
         stage('Deploy') {
             steps {
