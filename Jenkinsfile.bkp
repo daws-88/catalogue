@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         COURSE = 'jenkins'
-        APP_VERSION = ''
+        APP_VERSION = ""
         ACC_ID = '183992491863'
         PROJECT = 'roboshop'
         COMPONENT = 'catalogue'
@@ -130,7 +130,7 @@ pipeline {
                     --exit-code 1 \
                     --no-progress \
                     --format table \
-                    ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:1.0.0
+                    ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${APP_VERSION}
                     """
                 }
             }
