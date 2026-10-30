@@ -1,12 +1,12 @@
 @Library('jenkins-shared-library') _
 
-def configMap = [
+def configmap = [
     project  : 'roboshop',
     component: 'catalogue'
 ]
 
 if (env.BRANCH_NAME != 'main') {
-    nodejsEKSpipeline(configMap)
+    nodejsEKSpipeline(configmap)
 } else {
     echo 'Please follow the CR process'
 }
